@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import StarRating from "../../Components/StarRating";
+import StarRating from "../../Components/StarRatingF";
 
 const FeedbackEdit = () => {
   const { id } = useParams();

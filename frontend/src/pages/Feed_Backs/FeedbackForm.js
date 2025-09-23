@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import StarRating from "../../Components/StarRating";
+import StarRating from "../../Components/StarRatingF";
 import assets from "../../assets/assets";
 import DashboardNavbar from "../../Components/Navbar";
 

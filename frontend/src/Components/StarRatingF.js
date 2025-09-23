@@ -1,6 +1,6 @@
 import React from "react";
 
-const StarRating = ({ rating, setRating, readOnly = false }) => {
+const StarRatingF = ({ rating, setRating, readOnly = false }) => {
   return (
     <div className="flex space-x-1">
       {[1, 2, 3, 4, 5].map((star) => (
@@ -18,4 +18,4 @@ const StarRating = ({ rating, setRating, readOnly = false }) => {
   );
 };
 
-export default StarRating;
+export default StarRatingF;
