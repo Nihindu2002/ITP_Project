@@ -16,7 +16,7 @@ const PetRegisterPage = () => {
 
   const fetchPets = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/register");
+      const res = await axios.get("http://localhost:5001/api/register");
       setPets(res.data.data);
     } catch (err) {
       console.error("❌ Error fetching pets:", err.message);

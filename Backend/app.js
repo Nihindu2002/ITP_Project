@@ -26,7 +26,7 @@ import User from "./Model/userModel.js";
 import bcrypt from "bcryptjs";
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 
 // -------------------- Middleware --------------------
 app.use(express.json());

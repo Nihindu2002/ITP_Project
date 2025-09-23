@@ -37,7 +37,7 @@ const FeedbackPage = () => {
   // Fetch feedbacks
   const fetchFeedbacks = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/feedback");
+      const res = await axios.get("http://localhost:5001/api/feedback");
       if (res.data.success) setFeedbacks(res.data.data);
     } catch (error) {
       console.error("Error fetching feedbacks:", error);

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./PendingAppointmentsDC.css";
 
-const URL = "http://localhost:5000/careCustomers";
+const URL = "http://localhost:5001/careCustomers";
 
 function PendingAppointments({ onReject }) {
   const [pendingAppointments, setPendingAppointments] = useState([]);

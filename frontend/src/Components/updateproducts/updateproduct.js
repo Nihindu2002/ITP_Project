@@ -22,7 +22,7 @@ function Updateproduct() {
 
   useEffect(() => {
     const fetchProduct = async () => {
-      const res = await axios.get("http://localhost:5000/products");
+      const res = await axios.get("http://localhost:5001/products");
       const product = res.data.products.find((p) => p._id === id);
       if (product) {
         if (product.expirationDate) {
@@ -52,7 +52,7 @@ function Updateproduct() {
     });
     if (file) formData.append("image", file);
 
-    await axios.put(`http://localhost:5000/products/${id}`, formData, {
+    await axios.put(`http://localhost:5001/products/${id}`, formData, {
       headers: { "Content-Type": "multipart/form-data" }
     });
 
