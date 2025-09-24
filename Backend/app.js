@@ -1,10 +1,12 @@
 // app.js (Backend Root, ESM)
+import "dotenv/config";
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import "dotenv/config";
+import bcrypt from "bcryptjs";
 
+// Routes
 import authRoutes from "./Routes/authRoutes.js";
 import userRoutes from "./Routes/userRoutes.js";
 import feedbackRoutes from "./Routes/feedback.js";
@@ -22,11 +24,14 @@ import reviewRouter from "./Routes/ReviewsRoutes.js";
 import dailyLogsRouter from "./Routes/DailyLogsRoutes.js";
 import checkInOutRouter from "./Routes/CheckInOutRoutes.js";
 
+import financeRoutes from "./Routes/finance/financeRoutes.js";
+import Invoice from "./Model/finance/invoiceModel.js";
+
+// Models
 import User from "./Model/userModel.js";
-import bcrypt from "bcryptjs";
 
 const app = express();
-const port = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5001;
 
 // -------------------- Middleware --------------------
 app.use(express.json());
@@ -47,13 +52,13 @@ app.use(
       return cb(new Error("Not allowed by CORS"));
     },
     credentials: true,
+    allowedHeaders: ["Content-Type", "x-role"],
   })
 );
 
 // -------------------- Routes --------------------
-app.get("/", (req, res) => res.send("Welcome to Pet Care Management API"));
-
 // Core APIs
+app.get("/", (_, res) => res.send("Welcome to Pet Care Management API"));
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/feedback", feedbackRoutes);
@@ -73,15 +78,15 @@ app.use("/reviews", reviewRouter);
 app.use("/dailyLogs", dailyLogsRouter);
 app.use("/checkinout", checkInOutRouter);
 
+// Finance
+app.use("/api/finance", financeRoutes);
+
 // -------------------- Super Admin Auto-Creation --------------------
 const createSuperAdmin = async () => {
   try {
     const { SUPER_ADMIN_EMAIL, SUPER_ADMIN_PASSWORD } = process.env;
-
     if (!SUPER_ADMIN_EMAIL || !SUPER_ADMIN_PASSWORD) {
-      console.error(
-        "❌ Missing SUPER_ADMIN_EMAIL or SUPER_ADMIN_PASSWORD in .env"
-      );
+      console.error("❌ Missing SUPER_ADMIN_EMAIL or SUPER_ADMIN_PASSWORD in .env");
       return;
     }
 
@@ -104,17 +109,41 @@ const createSuperAdmin = async () => {
   }
 };
 
+// -------------------- Background Finance Job --------------------
+const startOverdueJob = () => {
+  const markOverdue = async () => {
+    try {
+      const now = new Date();
+      const res = await Invoice.updateMany(
+        { status: "Pending", dueDate: { $lt: now } },
+        { $set: { status: "Overdue" } }
+      );
+      if (res.modifiedCount) {
+        console.log(`Overdue invoices marked: ${res.modifiedCount}`);
+      }
+    } catch (err) {
+      console.error("Overdue job error:", err);
+    }
+  };
+  setInterval(markOverdue, 60 * 60 * 1000); // Run hourly
+  markOverdue(); // Run immediately at startup
+};
+
 // -------------------- DB Connection --------------------
+const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/itp_project";
+
 mongoose
-  .connect(
-    process.env.MONGO_URI || "mongodb://127.0.0.1:27017/itp_project",
-    { dbName: "test" }
-  )
+  .connect(MONGO_URI, { dbName: "test" })
   .then(async () => {
     console.log("✅ Connected to MongoDB (Database: test)");
     await createSuperAdmin();
-    app.listen(port, () =>
-      console.log(`🚀 Server running on http://localhost:${port}`)
+    startOverdueJob();
+
+    app.listen(PORT, () =>
+      console.log(`🚀 Server running on http://localhost:${PORT}`)
     );
   })
   .catch((err) => console.error("❌ MongoDB connection error:", err.message));
+
+// -------------------- 404 Handler --------------------
+app.use((req, res) => res.status(404).json({ message: "Not found" }));
