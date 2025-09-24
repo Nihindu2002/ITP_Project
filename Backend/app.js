@@ -52,7 +52,7 @@ app.use(
       return cb(new Error("Not allowed by CORS"));
     },
     credentials: true,
-    allowedHeaders: ["Content-Type", "x-role"],
+    allowedHeaders: ["Content-Type", "x-role", "Authorization"], // <-- added Authorization
   })
 );
 
@@ -146,4 +146,7 @@ mongoose
   .catch((err) => console.error("❌ MongoDB connection error:", err.message));
 
 // -------------------- 404 Handler --------------------
-app.use((req, res) => res.status(404).json({ message: "Not found" }));
+// ⚠️ This is the correct catch-all: do NOT use "*" or "/*"
+app.use((req, res) => {
+  res.status(404).json({ message: "Not found" });
+});

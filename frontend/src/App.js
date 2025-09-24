@@ -85,6 +85,13 @@ import DailyLogs from './Components/DashboardDC/DailyLogs/DailyLogs';
 import AppointmentDetailsDC from './Components/DashboardDC/AppointmentDetailsDC/AppointmentDetailsDC';
 import ReviewsDC from './Components/DashboardDC/ReviewsDC/ReviewsDC';
 
+// ---------------- Finance ----------------
+import ClientPay from './Components/finance/ClientPay';
+import OnlinePay from './Components/finance/OnlinePay';
+import PaySuccess from './Components/finance/PaySuccess';
+import PaymentSummary from './Components/finance/PaymentSummary';
+import DashboardApp from './Components/finance/dashboard/DashboardApp';
+
 function App() {
   const currentUser = JSON.parse(localStorage.getItem("user")) || {};
 
@@ -175,6 +182,13 @@ function App() {
         <Route path="appointmentDetailsDC/:id" element={<AppointmentDetailsDC />} />
         <Route path="reviews" element={<ReviewsDC />} />
       </Route>
+
+      {/* -------- Finance Routes -------- */}
+      <Route path="/pay" element={<ClientPay />} />
+      <Route path="/pay/online" element={<OnlinePay />} />
+      <Route path="/pay/success" element={<PaySuccess />} />
+      <Route path="/pay/summary" element={<PaymentSummary />} />
+      <Route path="/fm/*" element={<DashboardApp />} />
     </Routes>
   );
 }
